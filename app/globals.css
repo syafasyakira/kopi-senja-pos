@@ -24,3 +24,40 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ... kode css lainnya ... */
+
+/* LOGIKA PRINT */
+@media print {
+  /* 1. Sembunyikan SEMUA elemen di halaman */
+  body * {
+    visibility: hidden;
+  }
+
+  /* 2. Kecuali elemen dengan ID "printable-area" dan anak-anaknya */
+  #printable-area, #printable-area * {
+    visibility: visible;
+  }
+
+  /* 3. Posisikan struk di pojok kiri atas kertas */
+  #printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none; /* Hilangkan bayangan saat print */
+  }
+
+  /* 4. Sembunyikan tombol-tombol di dalam modal saat print */
+  .no-print {
+    display: none !important;
+  }
+
+  /* 5. Pastikan background warna (orange strip) ikut keprint */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
