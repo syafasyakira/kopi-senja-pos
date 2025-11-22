@@ -1,0 +1,42 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabel Menu
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Int
+  category  String   // 'Coffee', 'Non-Coffee', etc
+  emoji     String
+  createdAt DateTime @default(now())
+  items     OrderItem[]
+}
+
+// Tabel Transaksi Utama (Header Struk)
+model Order {
+  id            Int      @id @default(autoincrement())
+  customerName  String?
+  totalPrice    Int
+  paymentMethod String   // 'CASH' | 'QRIS'
+  createdAt     DateTime @default(now())
+  items         OrderItem[]
+}
+
+// Tabel Detail Item per Transaksi
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  qty       Int
+  price     Int     // Harga saat transaksi (untuk jaga2 kalau harga menu berubah)
+}

@@ -1,40 +1,38 @@
-// components/MenuSection.tsx
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search } from 'lucide-react'; // Tambah icon Search
+import { Plus, Search } from 'lucide-react';
 import { MenuItem } from '../types';
-import { MENU_ITEMS } from '../data/menu';
 import { formatRupiah } from '../utils';
 
+// Tambahkan props 'items'
 interface MenuSectionProps {
   onAddToCart: (item: MenuItem) => void;
+  items: MenuItem[]; 
 }
 
-export default function MenuSection({ onAddToCart }: MenuSectionProps) {
+export default function MenuSection({ onAddToCart, items }: MenuSectionProps) {
   const [activeTab, setActiveTab] = useState<'minuman' | 'makanan'>('minuman');
-  const [searchQuery, setSearchQuery] = useState(""); // STATE BARU
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredMenu = useMemo(() => {
-    // 1. Filter Kategori Dulu
-    let items = activeTab === 'minuman' 
-      ? MENU_ITEMS.filter((i) => ['Coffee', 'Non-Coffee'].includes(i.category))
-      : MENU_ITEMS.filter((i) => ['Pastry', 'Cake'].includes(i.category));
+    // Gunakan 'items' dari props, bukan MENU_ITEMS statis
+    let filtered = activeTab === 'minuman' 
+      ? items.filter((i) => ['Coffee', 'Non-Coffee'].includes(i.category))
+      : items.filter((i) => ['Pastry', 'Cake'].includes(i.category));
 
-    // 2. Filter Pencarian (Jika ada ketikan)
     if (searchQuery) {
-      items = items.filter(item => 
+      filtered = filtered.filter(item => 
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    return items;
-  }, [activeTab, searchQuery]);
+    return filtered;
+  }, [activeTab, searchQuery, items]); // Dependency update
 
   return (
     <div className="flex-1">
-      {/* SEARCH BAR & TABS WRAPPER */}
+      {/* Search & Tabs */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
-        {/* Input Search */}
         <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input 
@@ -46,7 +44,6 @@ export default function MenuSection({ onAddToCart }: MenuSectionProps) {
             />
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
           {['minuman', 'makanan'].map((tab) => (
              <button
@@ -64,7 +61,7 @@ export default function MenuSection({ onAddToCart }: MenuSectionProps) {
         </div>
       </div>
 
-      {/* Grid Menu (Sama seperti sebelumnya) */}
+      {/* Grid Menu */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {filteredMenu.length === 0 ? (
             <div className="col-span-full text-center py-10 text-gray-400">
@@ -72,7 +69,6 @@ export default function MenuSection({ onAddToCart }: MenuSectionProps) {
             </div>
         ) : (
             filteredMenu.map((item) => (
-                // ... kode motion.div kamu yang lama ...
                 <motion.div
                     key={item.id}
                     layout
